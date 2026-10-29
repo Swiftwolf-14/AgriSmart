@@ -1,0 +1,77 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Farmers | AgriSmart{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/professional_farmers.css' %}?{% now 'U' %}">
+</head>
+<body>
+    <main class="farm-container">
+        <a href="{% url 'agri_professional_dashboard' %}">
+            &larr; Back to Dashboard
+        </a>
+
+        <header class="form-heading">
+            <h1>Farmer Management</h1>
+            <p>View registered farmers and their agricultural information.</p>
+        </header>
+
+        <form method="GET" class="search-form">
+            <input
+                type="search"
+                name="q"
+                value="{{ search }}"
+                placeholder="Search by name, username, email or county..."
+            >
+            <button type="submit">Search</button>
+        </form>
+
+        <p><strong>{{ farmers|length }}</strong> farmer account(s) found</p>
+
+        {% for farmer in farmers %}
+            <section class="form-section farmer-card">
+                <div>
+                    <h2>
+                        {{ farmer.get_full_name|default:farmer.username }}
+                    </h2>
+
+                    <p>Username: {{ farmer.username }}</p>
+                    <p>Email: {{ farmer.email|default:"Not provided" }}</p>
+
+                    <p>
+                        Registered farms: {{ farmer.farms.count }}
+                    </p>
+
+                    {% if farmer.farms.all %}
+                        <p>
+                            Location:
+                            {% for farm in farmer.farms.all %}
+                                {{ farm.county }}{% if not forloop.last %}, {% endif %}
+                            {% empty %}
+                                Not provided
+                            {% endfor %}
+                        </p>
+                    {% endif %}
+                </div>
+
+                <a
+                    class="back-link"
+                    href="{% url 'professional_farmer_detail' farmer.id %}"
+                >
+                    View Farmer Details &rarr;
+                </a>
+            </section>
+        {% empty %}
+            <section class="form-section">
+                <h2>No farmers found</h2>
+                <p>
+                    No registered farmers match your search.
+                    Try another search term.
+                </p>
+            </section>
+        {% endfor %}
+    </main>
+</body>
+</html>

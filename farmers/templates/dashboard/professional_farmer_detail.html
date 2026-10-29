@@ -1,0 +1,337 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {% block title %}Farmer Details | AgriSmart{% endblock %}
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/professional_farmers.css' %}?{% now 'U' %}"
+    >
+</head>
+
+<body>
+    <main class="farm-container">
+
+        <!-- Back Navigation -->
+        <a href="{% url 'professional_farmers' %}">
+            &larr; Back to Farmers
+        </a>
+
+        <!-- Page Heading -->
+        <header class="form-heading">
+            <h1>
+                {{ farmer.get_full_name|default:farmer.username }}
+            </h1>
+
+            <p>
+                Farmer profile, registered farms, and soil assessment
+                information.
+            </p>
+        </header>
+
+        <!-- Farmer Profile -->
+        <section class="form-section">
+            <h2>Farmer Profile</h2>
+
+            <p>
+                <strong>Username:</strong> {{ farmer.username }}
+            </p>
+
+            <p>
+                <strong>First Name:</strong>
+                {{ farmer.first_name|default:"Not provided" }}
+            </p>
+
+            <p>
+                <strong>Last Name:</strong>
+                {{ farmer.last_name|default:"Not provided" }}
+            </p>
+
+            <p>
+                <strong>Email:</strong>
+                {{ farmer.email|default:"Not provided" }}
+            </p>
+
+            <p>
+                <strong>Date Joined:</strong>
+                {{ farmer.date_joined|date:"d M Y" }}
+            </p>
+        </section>
+
+        <!-- Registered Farms -->
+        <section>
+            <h2>Registered Farms ({{ farms|length }})</h2>
+
+            {% for farm in farms %}
+                <article class="form-section">
+                    <h2>{{ farm.farm_name }}</h2>
+
+                    <p>
+                        <strong>Farming Type:</strong>
+                        {{ farm.get_farming_type_display }}
+                    </p>
+
+                    <p>
+                        <strong>Location:</strong>
+                        {{ farm.village|default:"" }}
+                        {{ farm.sub_county|default:"" }},
+                        {{ farm.county|default:"Not provided" }}
+                    </p>
+
+                    <p>
+                        <strong>Farm Size:</strong>
+                        {{ farm.farm_size }} {{ farm.size_unit }}
+                    </p>
+
+                    <p>
+                        <strong>Soil Type:</strong>
+                        {{ farm.get_soil_type_display|default:"Not provided" }}
+                    </p>
+
+                    <p>
+                        <strong>Water Source:</strong>
+                        {{ farm.water_source|default:"Not provided" }}
+                    </p>
+
+                    <p>
+                        <strong>Irrigation Method:</strong>
+                        {{ farm.get_irrigation_method_display|default:"Not provided" }}
+                    </p>
+
+                    {% if farm.crops_planted %}
+                        <p>
+                            <strong>Crops Planted:</strong>
+                            {{ farm.crops_planted }}
+                        </p>
+                    {% endif %}
+
+                    {% if farm.other_crops %}
+                        <p>
+                            <strong>Other Crops:</strong>
+                            {{ farm.other_crops }}
+                        </p>
+                    {% endif %}
+
+                    {% if farm.livestock_types %}
+                        <p>
+                            <strong>Livestock:</strong>
+                            {{ farm.livestock_types }}
+                        </p>
+
+                        <p>
+                            <strong>Number of Animals:</strong>
+                            {{ farm.livestock_count|default:"Not provided" }}
+                        </p>
+                    {% endif %}
+
+                    <p>
+                        <strong>Uses Fertilizer:</strong>
+                        {% if farm.uses_fertilizer %}Yes{% else %}No{% endif %}
+                    </p>
+
+                    {% if farm.uses_fertilizer %}
+                        <p>
+                            <strong>Fertilizer Details:</strong>
+                            {{ farm.fertilizer_details|default:"Not provided" }}
+                        </p>
+                    {% endif %}
+
+                    <p>
+                        <strong>Pest or Disease Problems:</strong>
+                        {% if farm.has_pests_or_diseases %}
+                            {{ farm.pest_disease_details|default:"Details not provided" }}
+                        {% else %}
+                            None reported
+                        {% endif %}
+                    </p>
+
+                    <p>
+                        <strong>Farming Challenges:</strong>
+                        {{ farm.farming_challenges|default:"Not provided" }}
+                    </p>
+
+                    <p>
+                        <strong>Additional Notes:</strong>
+                        {{ farm.notes|default:"None" }}
+                    </p>
+
+                    <small>
+                        Farm registered on {{ farm.created_at|date:"d M Y" }}
+                    </small>
+                </article>
+            {% empty %}
+                <article class="form-section">
+                    <h3>No Registered Farms</h3>
+                    <p>
+                        This farmer has an account but has not registered
+                        any farms yet.
+                    </p>
+                </article>
+            {% endfor %}
+        </section>
+
+        <!-- Soil Assessment History -->
+        <section>
+            <h2>
+                Soil Assessment History ({{ assessments|length }})
+            </h2>
+
+            {% for assessment in assessments %}
+                <article class="form-section assessment-record">
+
+                    <h3>{{ assessment.farm.farm_name }}</h3>
+
+                    <p>
+                        <strong>Assessment Type:</strong>
+                        {{ assessment.get_assessment_type_display }}
+                    </p>
+
+                    <p>
+                        <strong>Reason for Assessment:</strong>
+                        {{ assessment.get_reason_display }}
+                    </p>
+
+                    <p>
+                        <strong>Assessment Date:</strong>
+                        {% if assessment.assessment_date %}
+                            {{ assessment.assessment_date|date:"d M Y" }}
+                        {% else %}
+                            Not provided
+                        {% endif %}
+                    </p>
+
+                    <p>
+                        <strong>Submitted On:</strong>
+                        {{ assessment.created_at|date:"d M Y, H:i" }}
+                    </p>
+
+                    <p>
+                        <strong>Status:</strong>
+                        <span class="assessment-status">
+                            {{ assessment.get_status_display }}
+                        </span>
+                    </p>
+
+                    <p>
+                        <strong>Farmer's Notes:</strong>
+                        {{ assessment.notes|default:"No notes provided" }}
+                    </p>
+
+                    <p>
+                        <strong>Uploaded Report:</strong>
+                        {% if assessment.soil_file %}
+                            <a
+                                href="{{ assessment.soil_file.url }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                View Uploaded Report
+                            </a>
+                        {% else %}
+                            No file uploaded
+                        {% endif %}
+                    </p>
+
+                    <!-- Recommendation Action -->
+                    <div class="recommendation-actions">
+                        <a
+                            class="recommendation-button"
+                            href="{% url 'create_soil_recommendation' assessment_id=assessment.id %}"
+                        >
+                            Provide Recommendation
+                        </a>
+                    </div>
+
+                    <!-- Existing Recommendations -->
+                    {% with recommendations=assessment.recommendations.all %}
+                        {% if recommendations %}
+                            <div class="existing-recommendations">
+                                <h4>Existing Recommendations</h4>
+
+                                {% for recommendation in recommendations %}
+                                    <div class="recommendation-item">
+                                        <p>
+                                            <strong>Status:</strong>
+                                            {{ recommendation.get_status_display }}
+                                        </p>
+
+                                        <p>
+                                            <strong>Findings:</strong>
+                                            {{ recommendation.findings|linebreaksbr }}
+                                        </p>
+
+                                        <p>
+                                            <strong>Recommendations:</strong>
+                                            {{ recommendation.recommendations|linebreaksbr }}
+                                        </p>
+
+                                        {% if recommendation.fertilizer_advice %}
+                                            <p>
+                                                <strong>Fertilizer Advice:</strong>
+                                                {{ recommendation.fertilizer_advice|linebreaksbr }}
+                                            </p>
+                                        {% endif %}
+
+                                        {% if recommendation.follow_up_advice %}
+                                            <p>
+                                                <strong>Follow-up Advice:</strong>
+                                                {{ recommendation.follow_up_advice|linebreaksbr }}
+                                            </p>
+                                        {% endif %}
+
+                                        <small>
+                                            Recorded on
+                                            {{ recommendation.created_at|date:"d M Y, H:i" }}
+                                        </small>
+                                        {% if recommendation.status == "draft" %}
+                                            <div class="recommendation-actions">
+
+                                                <a
+                                                    class="recommendation-button"
+                                                    href="{% url 'create_soil_recommendation' assessment_id=assessment.id %}"
+                                                >
+                                                    Edit Draft
+                                                </a>
+
+                                                <form
+                                                    method="post"
+                                                    action="{% url 'send_soil_recommendation' recommendation_id=recommendation.id %}"
+                                                >
+                                                    {% csrf_token %}
+
+                                                    <button
+                                                        type="submit"
+                                                        class="recommendation-button"
+                                                    >
+                                                        Send to Farmer
+                                                    </button>
+                                                </form>
+
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+
+                </article>
+            {% empty %}
+                <article class="form-section">
+                    <h3>No Soil Assessments</h3>
+                    <p>
+                        This farmer has not submitted any soil assessments.
+                    </p>
+                </article>
+            {% endfor %}
+        </section>
+
+    </main>
+</body>
+</html>

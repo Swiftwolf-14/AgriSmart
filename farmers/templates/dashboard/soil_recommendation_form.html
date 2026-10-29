@@ -1,0 +1,287 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Soil Recommendation | AgriSmart</title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/soil_recommendation_form.css' %}?{% now 'U' %}"
+    >
+
+    <script
+        src="{% static 'js/soil_recommendation_form.js' %}"
+        defer
+    ></script>
+</head>
+
+<body>
+    <header class="topbar">
+        <div class="topbar-content">
+            <h1>AgriSmart</h1>
+            <p>Agricultural Decision Support System</p>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <a
+            href="{% url 'professional_farmer_detail' farmer_id=assessment.farmer_id %}"
+            class="back-link"
+        >
+            &larr; Back to Farmer Details
+        </a>
+
+        <section class="page-heading">
+            <h2>Soil Assessment Recommendation</h2>
+            <p>
+                Review the farmer's soil assessment and provide
+                professional findings and recommendations.
+            </p>
+        </section>
+
+        <!-- Assessment information -->
+        <section class="card assessment-card">
+            <div class="section-heading">
+                <div>
+                    <span class="eyebrow">ASSESSMENT OVERVIEW</span>
+                    <h3>Assessment Information</h3>
+                </div>
+
+                <span class="status-badge status-{{ assessment.status }}">
+                    {{ assessment.get_status_display }}
+                </span>
+            </div>
+
+            <div class="assessment-grid">
+                <div class="detail-item">
+                    <span class="detail-label">Farmer</span>
+                    <span class="detail-value">
+                        {{ assessment.farmer.get_full_name|default:assessment.farmer.username }}
+                    </span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">Farm Name</span>
+                    <span class="detail-value">
+                        {{ assessment.farm.farm_name }}
+                    </span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">Assessment Type</span>
+                    <span class="detail-value">
+                        {{ assessment.get_assessment_type_display }}
+                    </span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">Reason</span>
+                    <span class="detail-value">
+                        {{ assessment.get_reason_display }}
+                    </span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">Assessment Date</span>
+                    <span class="detail-value">
+                        {{ assessment.assessment_date|default:"Not provided" }}
+                    </span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">Submitted</span>
+                    <span class="detail-value">
+                        {{ assessment.created_at|date:"d M Y, H:i" }}
+                    </span>
+                </div>
+            </div>
+
+            {% if assessment.notes %}
+                <div class="notes-section">
+                    <span class="detail-label">Farmer's Notes</span>
+                    <p>{{ assessment.notes|linebreaksbr }}</p>
+                </div>
+            {% endif %}
+
+            {% if assessment.soil_file %}
+                <div class="file-section">
+                    <a
+                        href="{{ assessment.soil_file.url }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="file-link"
+                    >
+                        <span aria-hidden="true">&#128196;</span>
+                        View Uploaded Soil File
+                    </a>
+                </div>
+            {% endif %}
+        </section>
+
+        <!-- Recommendation form -->
+        <section class="card form-card">
+            <div class="section-heading">
+                <div>
+                    <span class="eyebrow">PROFESSIONAL REVIEW</span>
+                    <h3>Findings and Recommendations</h3>
+                </div>
+            </div>
+
+            <p class="form-intro">
+                Enter your assessment findings and provide clear,
+                practical advice for the farmer.
+            </p>
+
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="message">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <form
+                method="post"
+                id="recommendationForm"
+                novalidate
+            >
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="form-errors">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <div class="form-group">
+                    <label for="{{ form.findings.id_for_label }}">
+                        Assessment Findings
+                        <span class="required">*</span>
+                    </label>
+
+                    {{ form.findings }}
+
+                    {% if form.findings.errors %}
+                        <div class="field-error">
+                            {{ form.findings.errors }}
+                        </div>
+                    {% endif %}
+
+                    <small>
+                        Describe what the assessment indicates based on
+                        the available evidence.
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.recommendations.id_for_label }}">
+                        Recommended Actions
+                        <span class="required">*</span>
+                    </label>
+
+                    {{ form.recommendations }}
+
+                    {% if form.recommendations.errors %}
+                        <div class="field-error">
+                            {{ form.recommendations.errors }}
+                        </div>
+                    {% endif %}
+
+                    <small>
+                        Explain the practical steps the farmer should take.
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.fertilizer_advice.id_for_label }}">
+                        Fertilizer Advice
+                    </label>
+
+                    {{ form.fertilizer_advice }}
+
+                    {% if form.fertilizer_advice.errors %}
+                        <div class="field-error">
+                            {{ form.fertilizer_advice.errors }}
+                        </div>
+                    {% endif %}
+
+                    <small>
+                        Provide appropriate fertilizer guidance when
+                        supported by the assessment.
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.follow_up_advice.id_for_label }}">
+                        Follow-up Advice
+                    </label>
+
+                    {{ form.follow_up_advice }}
+
+                    {% if form.follow_up_advice.errors %}
+                        <div class="field-error">
+                            {{ form.follow_up_advice.errors }}
+                        </div>
+                    {% endif %}
+
+                    <small>
+                        Describe monitoring, retesting, or other follow-up steps.
+                    </small>
+                </div>
+
+                <div
+                    class="form-error-summary"
+                    id="formErrorSummary"
+                    role="alert"
+                    hidden
+                ></div>
+
+                <div class="form-actions">
+                    <a
+                        href="{% url 'professional_farmer_detail' farmer_id=assessment.farmer_id %}"
+                        class="btn btn-secondary"
+                    >
+                        Cancel
+                    </a>
+
+                    <button
+                        type="submit"
+                        name="action"
+                        value="draft"
+                        class="btn btn-draft"
+                    >
+                        Save as Draft
+                    </button>
+
+                    <button
+                        type="submit"
+                        name="action"
+                        value="send"
+                        class="btn btn-primary"
+                        id="sendRecommendationButton"
+                    >
+                        Send Recommendation
+                    </button>
+                </div>
+
+                <p class="form-note">
+                    Saving a draft does not send it to the farmer.
+                    Sending a recommendation marks the assessment as reviewed.
+                </p>
+            </form>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <p>&copy; {% now "Y" %} AgriSmart. Smart decisions for better farming.</p>
+    </footer>
+</body>
+</html>

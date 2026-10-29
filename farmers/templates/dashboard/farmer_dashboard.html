@@ -1,0 +1,484 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AgriSmart | Farmer Dashboard{% endblock %}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet" href="{% static 'css/farm.css' %}?{% now 'U' %}">
+</head>
+<body>
+
+<div class="app">
+    <aside class="sidebar" id="sidebar">
+
+        <div class="brand">
+            <div class="brand-icon">
+                <i class="fa-solid fa-leaf"></i>
+            </div>
+            <div>
+                <h2>AgriSmart</h2>
+                <p>Smarter Farms. Brighter Futures.</p>
+            </div>
+            <button class="close-sidebar" id="closeSidebar" aria-label="Close menu">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <nav class="navigation">
+            <a href="#home" class="nav-link active">
+                <i class="fa-solid fa-house"></i><span>Home</span>
+            </a>
+            <a href="#farms" class="nav-link">
+                <i class="fa-solid fa-seedling"></i><span>My Farms & Fields</span>
+            </a>
+            <a href="{% url 'soil_health' %}" class="nav-link">
+                <i class="fa-solid fa-wheat-awn"></i><span>Soil Health</span>
+            </a>
+            <a href="#water" class="nav-link">
+                <i class="fa-solid fa-droplet"></i><span>Water & Irrigation</span>
+            </a>
+            <a href="#crop" class="nav-link">
+                <i class="fa-solid fa-magnifying-glass"></i><span>Crop Disease Detection</span>
+            </a>
+            <a href="#sustainability" class="nav-link">
+                <i class="fa-solid fa-leaf"></i><span>Sustainability & Carbon</span>
+            </a>
+            <a href="{% url 'soil_health' %}" class="nav-link">
+                <i class="fa-solid fa-brain"></i><span>Recommendations</span>
+            </a>
+            <a href="#alerts" class="nav-link">
+                <i class="fa-regular fa-bell"></i>
+                <span>Alerts </span>
+                <span class="nav-badge">3</span>
+            </a>
+             <a href="{% url 'add_farm' %}" class="nav-link">
+                <i class="fa-solid fa-plus"></i>
+                <span>Register Farm</span>
+            </a>
+
+            <a href="{% url 'my_farms' %}" class="nav-link">
+                <i class="fa-solid fa-tractor"></i>
+                <span>My Farms</span>
+            </a>
+            <a href="#settings" class="nav-link">
+                <i class="fa-solid fa-gear"></i><span>Settings</span>
+            </a>
+        </nav>
+        <form method="POST" action="{% url 'logout' %}" class="logout-form">
+            {% csrf_token %}
+             <button type="submit" class="logout-button">
+            <span class="logout-icon">↪</span>
+            <span>Logout</span>
+            </button>
+        </form>
+    </aside>
+
+    <!-- MAIN AREA -->
+    <main class="main-content" id="home">
+
+        <!-- TOP BAR -->
+        <header class="topbar">
+            <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <div class="breadcrumb">
+                <span>Workspace</span>
+                <i class="fa-solid fa-chevron-right"></i>
+                <strong>Dashboard</strong>
+            </div>
+
+            <div class="topbar-right">
+
+                <button class="notification-button" id="notificationButton"
+                        aria-label="Notifications">
+                    <i class="fa-regular fa-bell"></i>
+                    <span class="notification-dot"></span>
+                </button>
+
+            <div class="profile" id="profileButton" role="button"
+         tabindex="0" aria-expanded="false">
+
+        <div class="avatar">
+            {% with name=request.user.first_name|default:request.user.username %}
+                {{ name|first|upper }}{{ name|slice:"1:"|cut:" "|first|upper }}
+            {% endwith %}
+        </div>
+
+    <div class="profile-info">
+        <strong>
+            {{ request.user.get_full_name|default:request.user.username }}
+        </strong>
+
+        <span>{{ profile.get_role_display|default:profile.role }}</span>
+    </div>
+
+    <i class="fa-solid fa-chevron-down profile-arrow"></i>
+
+    <div class="profile-menu" id="profileMenu">
+        <a href="#settings">
+            <i class="fa-regular fa-user"></i> My profile
+        </a>
+
+        <a href="#settings">
+            <i class="fa-solid fa-gear"></i> Settings
+        </a>
+    </div>
+</div>
+            </div>
+        </header>
+
+        <!-- HERO BANNER -->
+        <section class="hero">
+            <div class="hero-overlay"></div>
+
+            <div class="hero-content">
+                <h1>Smarter farming<br>decisions start here</h1>
+                <p class="hero-description">
+                    Monitor your farm, get real-time insights and receive
+                    personalized recommendations to improve your yields,
+                    conserve resources and grow sustainably.
+                </p>
+
+                <div class="hero-actions">
+                    <a href="#farms" class="btn btn-primary">
+                        View My Farm <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                    <a href="#recommendations" class="btn btn-outline">
+                        Explore Features
+                    </a>
+                </div>
+            </div>
+
+            <div class="hero-label">
+                <div class="hero-label-icon">
+                    <i class="fa-solid fa-seedling"></i>
+                </div>
+                <div>
+                    <strong>Healthy Farms</strong>
+                    <span>Sustainable Future</span>
+                </div>
+                <i class="fa-solid fa-wheat-awn label-leaf"></i>
+            </div>
+        </section>
+
+        <!-- DASHBOARD BODY -->
+        <div class="dashboard-body">
+
+            <div class="dashboard-main">
+
+                <!-- FEATURE CARDS -->
+                <section class="feature-grid" id="recommendations">
+
+                    <article class="feature-card" id="soil">
+                        <div class="feature-icon icon-green">
+                            <i class="fa-solid fa-seedling"></i>
+                        </div>
+                        <h3>Soil Health</h3>
+                        <p>Check soil conditions and get improvement tips.</p>
+                        <a href="#soil-details" class="details-link">
+                            View details <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </article>
+
+                    <article class="feature-card" id="water">
+                        <div class="feature-icon icon-blue">
+                            <i class="fa-solid fa-droplet"></i>
+                        </div>
+                        <h3>Water & Irrigation</h3>
+                        <p>Track water usage and get watering recommendations.</p>
+                        <a href="#water-details" class="details-link">
+                            View details <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </article>
+
+                    <article class="feature-card" id="crop">
+                        <div class="feature-icon icon-cyan">
+                            <i class="fa-solid fa-magnifying-glass-chart"></i>
+                        </div>
+                        <h3>Crop Health</h3>
+                        <p>Detect diseases early and protect your crops.</p>
+                        <a href="#crop-details" class="details-link">
+                            View details <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </article>
+
+                    <article class="feature-card" id="sustainability">
+                        <div class="feature-icon icon-green">
+                            <i class="fa-solid fa-leaf"></i>
+                        </div>
+                        <h3>Sustainability</h3>
+                        <p>Track your environmental impact and carbon footprint.</p>
+                        <a href="#sustainability-details" class="details-link">
+                            View details <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </article>
+
+                </section>
+
+                <!-- FARM OVERVIEW -->
+                <section class="farms-section" id="farms">
+
+                    <div class="section-heading">
+                        <div>
+                            <h2>Your Farms Overview</h2>
+                            <p class="section-subtitle">Monitor your farms to get better insights</p>
+                        </div>
+                        <button class="text-button" id="viewAllFarms">
+                            View all farms <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+
+                    <div class="farm-grid">
+
+                        <article class="farm-card">
+                            <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=400&q=80"
+                                 alt="Green fields at Main Farm">
+                            <div class="farm-info">
+                                <h3>Main Farm</h3>
+                                <p><i class="fa-solid fa-location-dot"></i> Kiambu, Kenya</p>
+                                <p><i class="fa-solid fa-ruler-combined"></i> 2.5 acres</p>
+                                <p><i class="fa-solid fa-seedling"></i> Maize</p>
+                                <span class="status"><i class="fa-solid fa-circle"></i> Active</span>
+                            </div>
+                        </article>
+
+                        <article class="farm-card">
+                            <img src="https://images.unsplash.com/photo-1499529112087-3cb3b73cec95?auto=format&fit=crop&w=400&q=80"
+                                 alt="Vegetable crops growing in a field">
+                            <div class="farm-info">
+                                <h3>Vegetable Farm</h3>
+                                <p><i class="fa-solid fa-location-dot"></i> Nairobi, Kenya</p>
+                                <p><i class="fa-solid fa-ruler-combined"></i> 1.2 acres</p>
+                                <p><i class="fa-solid fa-seedling"></i> Kale, Tomatoes</p>
+                                <span class="status"><i class="fa-solid fa-circle"></i> Active</span>
+                            </div>
+                        </article>
+
+                        <article class="farm-card">
+                            <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&w=400&q=80"
+                                 alt="Cultivated crops at Test Farm">
+                            <div class="farm-info">
+                                <h3>Test Farm</h3>
+                                <p><i class="fa-solid fa-location-dot"></i> Nakuru, Kenya</p>
+                                <p><i class="fa-solid fa-ruler-combined"></i> 3.0 acres</p>
+                                <p><i class="fa-solid fa-seedling"></i> Beans</p>
+                                <span class="status"><i class="fa-solid fa-circle"></i> Active</span>
+                            </div>
+                        </article>
+
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- RIGHT COLUMN -->
+            <aside class="dashboard-right">
+
+                <!-- WEATHER -->
+                <section class="weather-card">
+                    <div class="weather-heading">
+                        <div class="sun-icon">
+                            <i class="fa-solid fa-sun"></i>
+                        </div>
+                        <div>
+                            <h3>Weather Today</h3>
+                            <p>
+                                <i class="fa-solid fa-location-dot"></i>
+                                {{ weather.location|default:"Farm location not set" }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="weather-farm-selector">
+                        <label for="farmSelect">Weather for farm:</label>
+
+                        <select
+                            id="farmSelect"
+                            onchange="if (this.value) window.location.href='?farm=' + this.value;"
+                        >
+                            {% for farm in farms %}
+                                <option
+                                    value="{{ farm.id }}"
+                                    {% if selected_farm and selected_farm.id == farm.id %}selected{% endif %}
+                                >
+                                    {{ farm.farm_name }}
+                                </option>
+                            {% empty %}
+                                <option value="">No farms registered</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="weather-main">
+                        <div>
+                            <h2 id="temperature">
+                                {% if weather.temperature is not None %}
+                                    {{ weather.temperature }}°C
+                                {% else %}
+                                    --°C
+                                {% endif %}
+                            </h2>
+                            <p id="weatherDescription">
+                                {{ weather.description|default:"Weather data unavailable" }}
+                            </p>
+                        </div>
+                        <i class="fa-solid fa-cloud-sun weather-illustration"></i>
+                    </div>
+
+                    <div class="weather-stats">
+                        <div>
+                            <i class="fa-solid fa-droplet"></i>
+                            <span>Humidity</span>
+                            <strong>
+                                {% if weather.humidity is not None %}
+                                    {{ weather.humidity }}%
+                                {% else %}
+                                    --%
+                                {% endif %}
+                            </strong>
+                        </div>
+
+                        <div>
+                            <i class="fa-solid fa-wind"></i>
+                            <span>Wind</span>
+                            <strong>
+                                {% if weather.wind_speed is not None %}
+                                    {{ weather.wind_speed }} km/h
+                                {% else %}
+                                    -- km/h
+                                {% endif %}
+                            </strong>
+                        </div>
+                    </div>
+
+                    <p class="weather-note">
+                        <i class="fa-solid fa-circle-info"></i>
+                        {{ weather.note|default:"Live weather will appear when available." }}
+                    </p>
+                </section>
+
+                <!-- ALERTS -->
+                <section class="alerts-card" id="alerts">
+                    <div class="section-heading alerts-heading">
+                        <h2>Recent Alerts</h2>
+                        <button class="text-button" id="viewAllAlerts">View all <i class="fa-solid fa-arrow-right"></i></button>
+                    </div>
+
+                    <div class="alert-item">
+                        <div class="alert-icon alert-danger">
+                            <i class="fa-solid fa-exclamation"></i>
+                        </div>
+                        <div class="alert-content">
+                            <strong>Soil pH is low in Field 2</strong>
+                            <span>2 hours ago</span>
+                        </div>
+                    </div>
+
+                    <div class="alert-item">
+                        <div class="alert-icon alert-warning">
+                            <i class="fa-solid fa-exclamation"></i>
+                        </div>
+                        <div class="alert-content">
+                            <strong>Water usage is higher than usual</strong>
+                            <span>5 hours ago</span>
+                        </div>
+                    </div>
+
+                    <div class="alert-item">
+                        <div class="alert-icon alert-success">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
+                        <div class="alert-content">
+                            <strong>Crop health is good</strong>
+                            <span>Yesterday</span>
+                        </div>
+                    </div>
+
+                    <div class="all-alerts" id="allAlerts">
+                        <div class="alert-item">
+                            <div class="alert-icon alert-warning">
+                                <i class="fa-solid fa-cloud-rain"></i>
+                            </div>
+                            <div class="alert-content">
+                                <strong>Check the rain forecast</strong>
+                                <span>Yesterday</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </aside>
+        </div>
+
+        <footer class="footer">
+            <p>© 2026 AgriSmart. Growing a smarter, greener future.</p>
+            <span><i class="fa-solid fa-circle"></i> All systems ready</span>
+        </footer>
+
+    </main>
+</div>
+
+<!-- MOBILE SIDEBAR OVERLAY -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- TOAST MESSAGE -->
+<div class="toast" id="toast" role="status" aria-live="polite">
+    <i class="fa-solid fa-circle-check"></i>
+    <span id="toastMessage">Action completed</span>
+</div>
+
+<script src="script.js"></script>
+<script>
+    const isLoggedIn = "{{ request.user.is_authenticated }}" === "true";
+
+    if (isLoggedIn) {
+        const warningTime = 9 * 60 * 1000;
+        const logoutTime = 10 * 60 * 1000;
+
+        let warningTimer;
+        let logoutTimer;
+
+        function resetInactivityTimer() {
+            clearTimeout(warningTimer);
+            clearTimeout(logoutTimer);
+
+            warningTimer = setTimeout(() => {
+                alert(
+                    "You have been inactive for 9 minutes. " +
+                    "Interact with the page to stay logged in."
+                );
+            }, warningTime);
+
+            logoutTimer = setTimeout(() => {
+                window.location.href = "{% url 'session_timeout' %}";
+            }, logoutTime);
+        }
+
+        [
+            "mousemove",
+            "mousedown",
+            "keydown",
+            "scroll",
+            "touchstart",
+            "click"
+        ].forEach(eventName => {
+            document.addEventListener(
+                eventName,
+                resetInactivityTimer,
+                { passive: true }
+            );
+        });
+
+        resetInactivityTimer();
+    }
+</script>
+</body>
+</html>

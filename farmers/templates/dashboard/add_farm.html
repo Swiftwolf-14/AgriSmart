@@ -1,0 +1,291 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}Register Farm | AgriSmart{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'css/add_farm.css' %}?{% now 'U' %}">
+
+</head>
+
+<body>
+    <main class="farm-container">
+
+        <a href="{% url 'farmer_dashboard' %}"
+           class="back-link">
+            &larr; Back to Dashboard
+        </a>
+
+        <header class="form-heading">
+            <span class="eyebrow">FARM MANAGEMENT</span>
+            <h1>Register Your Farm</h1>
+            <p>
+                Tell us about your farm so that AgriSmart  can
+                provide relevant farming insights that best suit your farm.
+            </p>
+        </header>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message {{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST" id="farmForm">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="message error">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <section class="form-section">
+                <h2>01. Basic Farm Information</h2>
+
+                <div class="form-grid">
+                    <div class="field">
+                        <label for="id_farm_name">Farm name *</label>
+                        {{ form.farm_name }}
+                        {{ form.farm_name.errors }}
+                    </div>
+
+                    <div class="field">
+                        <label for="id_farming_type">
+                            Farming type *
+                        </label>
+                        {{ form.farming_type }}
+                        {{ form.farming_type.errors }}
+                    </div>
+
+                    <div class="field">
+                        <label for="id_county">County *</label>
+                        {{ form.county }}
+                        {{ form.county.errors }}
+                    </div>
+
+                    <div class="field">
+                        <label for="id_sub_county">Sub-county</label>
+                        {{ form.sub_county }}
+                    </div>
+
+                    <div class="field">
+                        <label for="id_village">
+                            Village or area
+                        </label>
+                        {{ form.village }}
+                    </div>
+                    <div class="field gps-section">
+                        <label>Farm GPS Location <span>(Optional)</span></label>
+
+                        <p class="gps-description">
+                            Allow AgriSmart to identify your farm's location for more
+                            relevant local weather forecasts and farming advice.
+                        </p>
+
+                        <button
+                            type="button"
+                            id="getLocationBtn"
+                            class="gps-button"
+                        >
+                    
+                            Use My Current Location
+                        </button>
+
+                        <p id="locationStatus" role="status" aria-live="polite"></p>
+
+                        <div class="gps-coordinates">
+                            <div class="field">
+                                <label for="id_latitude">Latitude</label>
+                                <input
+                                    type="number"
+                                    step="any"
+                                    name="latitude"
+                                    id="id_latitude"
+                                    value="{{ form.latitude.value|default_if_none:'' }}"
+                                    readonly
+                                >
+                            </div>
+
+                            <div class="field">
+                                <label for="id_longitude">Longitude</label>
+                                <input
+                                    type="number"
+                                    step="any"
+                                    name="longitude"
+                                    id="id_longitude"
+                                    value="{{ form.longitude.value|default_if_none:'' }}"
+                                    readonly
+                                >
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="id_farm_size">
+                            Farm size *
+                        </label>
+                        {{ form.farm_size }}
+                        {{ form.farm_size.errors }}
+                    </div>
+
+                    <div class="field">
+                        <label for="id_size_unit">
+                            Size unit
+                        </label>
+                        {{ form.size_unit }}
+                    </div>
+
+                    <div class="field">
+                        <label for="id_soil_type">Soil type</label>
+                        {{ form.soil_type }}
+                    </div>
+                </div>
+            </section>
+
+            <section class="form-section">
+                <h2>02. Water and Irrigation</h2>
+
+                <div class="form-grid">
+                    <div class="field">
+                        <label for="id_water_source">
+                            Main water source
+                        </label>
+                        {{ form.water_source }}
+                    </div>
+
+                    <div class="field">
+                        <label for="id_irrigation_method">
+                            Irrigation method
+                        </label>
+                        {{ form.irrigation_method }}
+                    </div>
+                </div>
+            </section>
+
+            <section class="form-section conditional"
+                     id="cropSection">
+                <h2>03. Crop Production</h2>
+
+                <div class="field">
+                    <label for="id_crops_planted">
+                        Main crops planted
+                    </label>
+                    {{ form.crops_planted }}
+                    <small>
+                        Example: maize, beans, tomatoes.
+                    </small>
+                </div>
+
+                <div class="field">
+                    <label for="id_other_crops">
+                        Other crops planted
+                    </label>
+                    {{ form.other_crops }}
+                </div>
+
+                <div class="field">
+                    <label for="id_uses_fertilizer">
+                        Do you use fertilizer?
+                    </label>
+                    {{ form.uses_fertilizer }}
+                </div>
+
+                <div class="field" id="fertilizerSection">
+                    <label for="id_fertilizer_details">
+                        Fertilizer details
+                    </label>
+                    {{ form.fertilizer_details }}
+                </div>
+
+                <div class="field">
+                    <label for="id_has_pests_or_diseases">
+                        Are there pest or disease problems?
+                    </label>
+                    {{ form.has_pests_or_diseases }}
+                </div>
+
+                <div class="field" id="pestSection">
+                    <label for="id_pest_disease_details">
+                        Describe the pests or diseases
+                    </label>
+                    {{ form.pest_disease_details }}
+                </div>
+            </section>
+
+            <section class="form-section conditional"
+                     id="livestockSection">
+                <h2>04. Livestock Production</h2>
+
+                <div class="field">
+                    <label for="id_livestock_types">
+                        Animals kept
+                    </label>
+                    {{ form.livestock_types }}
+                    <small>
+                        Example: dairy cattle, goats, sheep.
+                    </small>
+                </div>
+
+                <div class="field">
+                    <label for="id_livestock_count">
+                        Total number of animals
+                    </label>
+                    {{ form.livestock_count }}
+                </div>
+            </section>
+
+            <section class="form-section conditional"
+                     id="otherSection">
+                <h2>05. Other Farming Activities</h2>
+
+                <div class="field">
+                    <label for="id_other_farming_details">
+                        Describe your other activities
+                    </label>
+                    {{ form.other_farming_details }}
+                    <small>
+                        Example: poultry, fish farming,
+                        beekeeping, or mushroom production.
+                    </small>
+                </div>
+            </section>
+
+            <section class="form-section">
+                <h2>06. Challenges and Additional Details</h2>
+
+                <div class="field">
+                    <label for="id_farming_challenges">
+                        What challenges do you face?
+                    </label>
+                    {{ form.farming_challenges }}
+                    <small>
+                        Example: pests, water shortages,
+                        high input costs, or unpredictable rain.
+                    </small>
+                </div>
+
+                <div class="field">
+                    <label for="id_notes">
+                        Other information
+                    </label>
+                    {{ form.notes }}
+                </div>
+            </section>
+
+            <button type="submit" class="submit-button">
+                Save Farm Details
+            </button>
+
+        </form>
+    </main>
+
+    <script src="{% static 'js/add_farm.js' %}"></script>
+</body>
+</html>

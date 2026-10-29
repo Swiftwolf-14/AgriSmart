@@ -1,0 +1,577 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}Soil Health | AgriSmart{% endblock %}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <link rel="stylesheet" href="{% static 'css/soil_health.css' %}">
+</head>
+
+<body>
+<div class="app-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <a href="{% url 'farmer_dashboard' %}" class="brand">
+            <span class="brand-icon">
+                <i class="fa-solid fa-seedling"></i>
+            </span>
+            <span>Agri<span class="brand-highlight">Smart</span></span>
+        </a>
+
+        <div class="sidebar-label">MAIN MENU</div>
+
+        <nav class="sidebar-nav">
+            <a href="{% url 'farmer_dashboard' %}" class="nav-link">
+                <i class="fa-solid fa-house"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="{% url 'my_farms' %}" class="nav-link">
+                <i class="fa-solid fa-tractor"></i>
+                <span>My Farms</span>
+            </a>
+
+            <a href="{% url 'soil_health' %}" class="nav-link active">
+                <i class="fa-solid fa-flask"></i>
+                <span>Soil Health</span>
+            </a>
+
+            <a href="#" class="nav-link">
+                <i class="fa-solid fa-cloud-sun"></i>
+                <span>Weather</span>
+            </a>
+
+            <a href="{% url 'soil_health' %}" class="nav-link">
+                <i class="fa-solid fa-lightbulb"></i>
+                <span>Recommendations</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="help-card">
+                <div class="help-icon">
+                    <i class="fa-solid fa-circle-question"></i>
+                </div>
+
+                <h3>Need help?</h3>
+                <p>Get assistance using AgriSmart.</p>
+                <a href="#">Contact support</a>
+            </div>
+
+            <div class="sidebar-user">
+                <div class="user-avatar">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+
+                <div class="user-info">
+                    <strong>
+                        {{ request.user.get_full_name|default:request.user.username }}
+                    </strong>
+                    <span>Farmer</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="main-content">
+
+        <!-- Top bar -->
+        <header class="topbar">
+            <div>
+                <p class="breadcrumb">AgriSmart / Soil Health</p>
+                <h1>Soil Health</h1>
+            </div>
+
+            <div class="topbar-user">
+                <div class="topbar-avatar">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+
+                <div>
+                    <strong>
+                        {{ request.user.get_full_name|default:request.user.username }}
+                    </strong>
+                    <span>Farmer account</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Introduction banner -->
+        <section class="welcome-banner">
+            <div class="welcome-content">
+                <span class="eyebrow">
+                    <i class="fa-solid fa-leaf"></i>
+                    HEALTHIER SOIL, BETTER HARVESTS
+                </span>
+
+                <h2>Understand the health of your soil</h2>
+
+                <p>
+                    Upload your soil assessment report and keep your soil
+                    information organized in one place.
+                </p>
+            </div>
+
+            <div class="banner-illustration">
+                <i class="fa-solid fa-seedling"></i>
+            </div>
+        </section>
+
+        <!-- Overview cards -->
+        <section class="overview-grid">
+            <article class="overview-card">
+                <div class="overview-icon green">
+                    <i class="fa-solid fa-file-arrow-up"></i>
+                </div>
+
+                <div>
+                    <p>Upload report</p>
+                    <h3>Add soil results</h3>
+                    <span>Submit an existing assessment file.</span>
+                </div>
+            </article>
+
+            <article class="overview-card">
+                <div class="overview-icon blue">
+                    <i class="fa-solid fa-microscope"></i>
+                </div>
+
+                <div>
+                    <p>Soil assessment</p>
+                    <h3>Track soil information</h3>
+                    <span>Keep records of your soil tests.</span>
+                </div>
+            </article>
+
+            <article class="overview-card">
+                <div class="overview-icon orange">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+
+                <div>
+                    <p>Next step</p>
+                    <h3>Review results</h3>
+                    <span>Assessment and recommendations can be added later.</span>
+                </div>
+            </article>
+        </section>
+
+        <!-- Upload form -->
+        <section class="content-card" id="upload-section">
+            <div class="section-heading">
+                <div>
+                    <h2>Upload soil assessment</h2>
+                    <p>
+                        Provide the details and select the report you want
+                        to submit.
+                    </p>
+                </div>
+
+                <span class="required-note">* Required fields</span>
+            </div>
+
+            <!-- Django messages -->
+            {% if messages %}
+                <div class="django-messages" aria-live="polite">
+                    {% for message in messages %}
+                        <p class="django-message {{ message.tags }}">
+                            {{ message }}
+                        </p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <form
+                id="soilUploadForm"
+                class="soil-form"
+                method="post"
+                enctype="multipart/form-data"
+            >
+                {% csrf_token %}
+
+                <!-- Farm -->
+                <div class="form-group">
+                    <label for="farm">
+                        Select farm <span>*</span>
+                    </label>
+
+                    <select id="farm" name="farm" required>
+                        <option value="">Choose a farm</option>
+
+                        {% for farm in farms %}
+                            <option value="{{ farm.id }}">
+                                {{ farm.farm_name }}
+                            </option>
+                        {% empty %}
+                            <option value="" disabled>
+                                No farms registered yet
+                            </option>
+                        {% endfor %}
+                    </select>
+
+                    <small>
+                        Select one of your registered farms. If no farms
+                        appear, register a farm first.
+                    </small>
+                </div>
+
+                <!-- Assessment type -->
+                <div class="form-group">
+                    <label for="assessmentType">
+                        Assessment type <span>*</span>
+                    </label>
+
+                    <select
+                        id="assessmentType"
+                        name="assessment_type"
+                        required
+                    >
+                        <option value="">Select assessment type</option>
+                        <option value="laboratory">Laboratory soil test</option>
+                        <option value="field">Field soil assessment</option>
+                        <option value="other">Other assessment</option>
+                    </select>
+                </div>
+
+                <!-- Assessment date -->
+                <div class="form-group">
+                    <label for="assessmentDate">Assessment date</label>
+
+                    <input
+                        type="date"
+                        id="assessmentDate"
+                        name="assessment_date"
+                    >
+                </div>
+
+                <!-- Reason -->
+                <div class="form-group">
+                    <label for="reason">
+                        Reason for assessment <span>*</span>
+                    </label>
+
+                    <select id="reason" name="reason" required>
+                        <option value="">Choose a reason</option>
+                        <option value="low-yield">
+                            Investigating low crop yields
+                        </option>
+                        <option value="fertility">
+                            Checking soil fertility
+                        </option>
+                        <option value="planting">
+                            Preparing for planting
+                        </option>
+                        <option value="nutrients">
+                            Checking nutrient levels
+                        </option>
+                        <option value="other">Other reason</option>
+                    </select>
+                </div>
+
+                <!-- Notes -->
+                <div class="form-group full-width">
+                    <label for="notes">
+                        Additional notes
+                        <span class="optional-label">(Optional)</span>
+                    </label>
+
+                    <textarea
+                        id="notes"
+                        name="notes"
+                        rows="4"
+                        placeholder="Describe soil concerns, crops grown, or other useful details..."
+                    ></textarea>
+                </div>
+
+                <!-- File upload -->
+                <div class="form-group full-width">
+                    <label for="soilFile">
+                        Soil assessment file <span>*</span>
+                    </label>
+
+                    <div class="upload-area" id="uploadArea">
+                        <input
+                            type="file"
+                            id="soilFile"
+                            name="soil_file"
+                            accept=".pdf,.jpg,.jpeg,.png"
+                            required
+                            hidden
+                        >
+
+                        <div class="upload-icon">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                        </div>
+
+                        <h3>Choose a soil report to upload</h3>
+
+                        <p>
+                            Drag and drop your file here, or
+                            <button
+                                type="button"
+                                class="browse-button"
+                                id="browseButton"
+                            >
+                                browse files
+                            </button>
+                        </p>
+
+                        <span class="file-hint">
+                            Accepted formats: PDF, JPG, PNG · Maximum size: 10 MB
+                        </span>
+                    </div>
+
+                    <div class="selected-file" id="selectedFile" hidden>
+                        <div class="file-icon">
+                            <i class="fa-solid fa-file-lines"></i>
+                        </div>
+
+                        <div class="file-details">
+                            <strong id="fileName">Selected file</strong>
+                            <span id="fileSize"></span>
+                        </div>
+
+                        <button
+                            type="button"
+                            id="removeFile"
+                            class="remove-file"
+                            aria-label="Remove selected file"
+                        >
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+
+                    <p class="form-message" id="formMessage" role="status"></p>
+                </div>
+
+                <!-- Form actions -->
+                <div class="form-actions full-width">
+                    <button
+                        type="reset"
+                        class="button button-secondary"
+                        id="resetButton"
+                    >
+                        <i class="fa-solid fa-rotate-left"></i>
+                        Clear form
+                    </button>
+
+                    <button type="submit" class="button button-primary">
+                        <i class="fa-solid fa-upload"></i>
+                        Submit assessment
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Assessment history -->
+        <section class="content-card history-card">
+            <div class="section-heading">
+                <div>
+                    <h2>Assessment history</h2>
+                    <p>View your previously submitted soil assessments.</p>
+                </div>
+
+                <span class="history-badge">
+                    {{ assessments|length }}
+                    record{{ assessments|length|pluralize }}
+                </span>
+            </div>
+
+            {% for assessment in assessments %}
+                <article class="assessment-record">
+                    <div class="assessment-record-heading">
+                        <div>
+                            <h3>{{ assessment.farm.farm_name }}</h3>
+                            <p>
+                                {{ assessment.get_assessment_type_display }}
+                            </p>
+                        </div>
+
+                        <span class="assessment-status">
+                            {{ assessment.get_status_display }}
+                        </span>
+                    </div>
+
+                    <div class="assessment-details">
+                        <p>
+                            <strong>Reason:</strong>
+                            {{ assessment.get_reason_display }}
+                        </p>
+
+                        <p>
+                            <strong>Assessment date:</strong>
+                            {% if assessment.assessment_date %}
+                                {{ assessment.assessment_date|date:"d M Y" }}
+                            {% else %}
+                                Not provided
+                            {% endif %}
+                        </p>
+
+                        <p>
+                            <strong>Submitted:</strong>
+                            {{ assessment.created_at|date:"d M Y, H:i" }}
+                        </p>
+
+                        {% if assessment.notes %}
+                            <p>
+                                <strong>Notes:</strong>
+                                {{ assessment.notes|linebreaksbr }}
+                            </p>
+                        {% endif %}
+                    </div>
+
+                    <a
+                        href="{{ assessment.soil_file.url }}"
+                        class="button button-secondary"
+                        target="_blank"
+                        rel="noopener"
+                    >
+                        <i class="fa-solid fa-file-arrow-down"></i>
+                        View uploaded report
+                    </a>
+                </article>
+            {% empty %}
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fa-solid fa-folder-open"></i>
+                    </div>
+
+                    <h3>Your soil assessments will appear here</h3>
+
+                    <p>
+                        You have not submitted any soil assessments yet.
+                        Upload your first report to start keeping records.
+                    </p>
+
+                    <button
+                        type="button"
+                        class="button button-primary"
+                        id="startUploadButton"
+                    >
+                        <i class="fa-solid fa-plus"></i>
+                        Upload your first report
+                    </button>
+                </div>
+            {% endfor %}
+        </section>
+        <!-- Professional recommendations -->
+<section class="content-card" id="recommendations">
+    <div class="section-heading">
+        <div>
+            <h2>Professional Recommendations</h2>
+            <p>
+                Review advice sent by your agricultural professional.
+            </p>
+        </div>
+
+        <span class="history-badge">
+            {{ recommendations|length }}
+            recommendation{{ recommendations|length|pluralize }}
+        </span>
+    </div>
+
+    {% for recommendation in recommendations %}
+        <article class="assessment-record">
+            <div class="assessment-record-heading">
+                <div>
+                    <h3>
+                        {{ recommendation.assessment.farm.farm_name }}
+                    </h3>
+                    <p>
+                        Soil assessment:
+                        {{ recommendation.assessment.get_assessment_type_display }}
+                    </p>
+                </div>
+
+                <span class="assessment-status">
+                    Sent
+                </span>
+            </div>
+
+            <div class="assessment-details">
+                <p>
+                    <strong>Professional:</strong>
+                    {{ recommendation.professional.get_full_name|default:recommendation.professional.username }}
+                </p>
+
+                <p>
+                    <strong>Date sent:</strong>
+                    {% if recommendation.sent_at %}
+                        {{ recommendation.sent_at|date:"d M Y, H:i" }}
+                    {% else %}
+                        {{ recommendation.updated_at|date:"d M Y, H:i" }}
+                    {% endif %}
+                </p>
+
+                <p>
+                    <strong>Findings:</strong><br>
+                    {{ recommendation.findings|linebreaksbr }}
+                </p>
+
+                <p>
+                    <strong>Recommendations:</strong><br>
+                    {{ recommendation.recommendations|linebreaksbr }}
+                </p>
+
+                {% if recommendation.fertilizer_advice %}
+                    <p>
+                        <strong>Fertilizer advice:</strong><br>
+                        {{ recommendation.fertilizer_advice|linebreaksbr }}
+                    </p>
+                {% endif %}
+
+                {% if recommendation.follow_up_advice %}
+                    <p>
+                        <strong>Follow-up advice:</strong><br>
+                        {{ recommendation.follow_up_advice|linebreaksbr }}
+                    </p>
+                {% endif %}
+            </div>
+        </article>
+    {% empty %}
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="fa-solid fa-lightbulb"></i>
+            </div>
+
+            <h3>No recommendations yet</h3>
+
+            <p>
+                Recommendations from your agricultural professional
+                will appear here once they have been sent.
+            </p>
+        </div>
+    {% endfor %}
+</section>
+
+        <!-- Footer -->
+        <footer class="page-footer">
+            <p>
+                AgriSmart &copy; {% now "Y" %} · Smart farming support
+            </p>
+        </footer>
+
+    </main>
+</div>
+
+<script src="{% static 'js/soil_health.js' %}" defer></script>
+</body>
+</html>

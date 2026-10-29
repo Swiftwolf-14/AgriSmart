@@ -1,0 +1,81 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My Farms | AgriSmart{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/add_farm.css' %}">
+</head>
+<body>
+    <main class="farm-container">
+        <a href="{% url 'farmer_dashboard' %}"
+           class="back-link">
+            &larr; Back to Dashboard
+        </a>
+
+        <header class="form-heading">
+            <h1>My Farms</h1>
+            <p>View the farms linked to your account.</p>
+        </header>
+
+        <p>
+            <a class="back-link" href="{% url 'add_farm' %}">
+                + Register Another Farm
+            </a>
+        </p>
+
+        {% for farm in farms %}
+            <section class="form-section">
+                <h2>{{ farm.farm_name }}</h2>
+
+                <p>
+                    <strong>Farming type:</strong>
+                    {{ farm.get_farming_type_display }}
+                </p>
+
+                <p>
+                    <strong>Location:</strong>
+                    {{ farm.village }} {{ farm.sub_county }},
+                    {{ farm.county }}
+                </p>
+
+                <p>
+                    <strong>Farm size:</strong>
+                    {{ farm.farm_size }} {{ farm.size_unit }}
+                </p>
+
+                {% if farm.crops_planted %}
+                    <p>
+                        <strong>Crops:</strong>
+                        {{ farm.crops_planted }}
+                    </p>
+                {% endif %}
+
+                {% if farm.livestock_types %}
+                    <p>
+                        <strong>Livestock:</strong>
+                        {{ farm.livestock_types }}
+                    </p>
+                {% endif %}
+
+                {% if farm.other_farming_details %}
+                    <p>
+                        <strong>Other activities:</strong>
+                        {{ farm.other_farming_details }}
+                    </p>
+                {% endif %}
+            </section>
+        {% empty %}
+            <section class="form-section">
+                <h2>No farms registered yet</h2>
+                <p>Register your first farm to get started.</p>
+                <a class="back-link" href="{% url 'add_farm' %}">
+                    Register a Farm
+                </a>
+            </section>
+        {% endfor %}
+    </main>
+</body>
+</html>

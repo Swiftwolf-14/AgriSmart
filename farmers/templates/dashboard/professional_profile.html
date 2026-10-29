@@ -1,0 +1,200 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}Professional Profile | AgriSmart{% endblock %}</title>
+
+    <link rel="stylesheet"
+          href="{% static 'css/professional_profile.css' %}?{% now 'U' %}">
+</head>
+<body>
+
+<main class="profile-container">
+
+    <a class="back-link"
+       href="{% url 'agri_professional_dashboard' %}">
+        &larr; Back to Dashboard
+    </a>
+
+    <header class="profile-header">
+        <span class="eyebrow">AGRISMART PROFESSIONAL PORTAL</span>
+        <h1>Professional Profile</h1>
+        <p>
+            Share your qualifications, agricultural expertise and
+            services so farmers can understand how you can help them.
+        </p>
+    </header>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="message {{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <section class="profile-card">
+        <div class="section-heading">
+            <h2>Account Information</h2>
+            <p>Your account name and email are displayed below.</p>
+        </div>
+
+        <div class="account-info">
+            <div>
+                <span>Full name</span>
+                <strong>
+                    {{ request.user.get_full_name|default:request.user.username }}
+                </strong>
+            </div>
+            <div>
+                <span>Email address</span>
+                <strong>{{ request.user.email|default:"Not provided" }}</strong>
+            </div>
+        </div>
+    </section>
+
+    <form method="POST" class="profile-form">
+        {% csrf_token %}
+
+        <section class="profile-card">
+            <div class="section-heading">
+                <h2>Contact and Location</h2>
+                <p>Tell farmers where you work and how to contact you.</p>
+            </div>
+
+            <div class="form-grid">
+                <div class="field">
+                    <label for="{{ form.phone.id_for_label }}">Phone number *</label>
+                    {{ form.phone }}
+                    {{ form.phone.errors }}
+                </div>
+
+                <div class="field">
+                    <label for="{{ form.county.id_for_label }}">County *</label>
+                    {{ form.county }}
+                    {{ form.county.errors }}
+                </div>
+
+                <div class="field">
+                    <label for="{{ form.sub_county.id_for_label }}">Sub-county</label>
+                    {{ form.sub_county }}
+                    {{ form.sub_county.errors }}
+                </div>
+            </div>
+        </section>
+
+        <section class="profile-card">
+            <div class="section-heading">
+                <h2>Professional Information</h2>
+                <p>Describe your training, experience and specialization.</p>
+            </div>
+
+            <div class="form-grid">
+                <div class="field">
+                    <label for="{{ form.organization.id_for_label }}">Organization</label>
+                    {{ form.organization }}
+                    {{ form.organization.errors }}
+                </div>
+
+                <div class="field">
+                    <label for="{{ form.job_title.id_for_label }}">Job title *</label>
+                    {{ form.job_title }}
+                    {{ form.job_title.errors }}
+                </div>
+
+                <div class="field">
+                    <label for="{{ form.qualification.id_for_label }}">Highest qualification *</label>
+                    {{ form.qualification }}
+                    {{ form.qualification.errors }}
+                </div>
+
+                <div class="field">
+                    <label for="{{ form.specialization.id_for_label }}">Area of specialization *</label>
+                    {{ form.specialization }}
+                    {{ form.specialization.errors }}
+                </div>
+
+                <div class="field">
+                    <label for="{{ form.other_specialization.id_for_label }}">Other specialization</label>
+                    {{ form.other_specialization }}
+                    {{ form.other_specialization.errors }}
+                </div>
+
+                <div class="field">
+                    <label for="{{ form.experience_years.id_for_label }}">Years of experience *</label>
+                    {{ form.experience_years }}
+                    {{ form.experience_years.errors }}
+                </div>
+            </div>
+        </section>
+
+        <section class="profile-card">
+            <div class="section-heading">
+                <h2>Services and Biography</h2>
+                <p>Help farmers understand what kind of support you offer.</p>
+            </div>
+
+            <div class="field">
+                <label for="{{ form.services_offered.id_for_label }}">Services offered *</label>
+                {{ form.services_offered }}
+                {{ form.services_offered.errors }}
+            </div>
+
+            <div class="field">
+                <label for="{{ form.bio.id_for_label }}">Professional biography</label>
+                {{ form.bio }}
+                {{ form.bio.errors }}
+            </div>
+        </section>
+
+        <section class="profile-card">
+            <div class="section-heading">
+                <h2>Availability and Communication</h2>
+            </div>
+
+            <div class="form-grid">
+                <div class="field">
+                    <label for="{{ form.working_days.id_for_label }}">Working days</label>
+                    {{ form.working_days }}
+                    {{ form.working_days.errors }}
+                </div>
+
+                <div class="field">
+                    <label for="{{ form.working_hours.id_for_label }}">Working hours</label>
+                    {{ form.working_hours }}
+                    {{ form.working_hours.errors }}
+                </div>
+
+                <div class="field">
+                    <label for="{{ form.preferred_contact.id_for_label }}">Preferred contact method</label>
+                    {{ form.preferred_contact }}
+                    {{ form.preferred_contact.errors }}
+                </div>
+
+                <div class="field checkbox-field">
+                    {{ form.emergency_support }}
+                    <label for="{{ form.emergency_support.id_for_label }}">
+                        Available for emergency agricultural support
+                    </label>
+                    {{ form.emergency_support.errors }}
+                </div>
+            </div>
+        </section>
+
+        {% if form.non_field_errors %}
+            <div class="message error">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <div class="form-actions">
+            <button type="submit">Save Professional Profile</button>
+        </div>
+    </form>
+
+</main>
+</body>
+</html>

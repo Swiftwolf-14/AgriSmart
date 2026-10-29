@@ -1,0 +1,330 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AgriSmart | Professional Dashboard{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'css/agri.css' %}?{% now 'U' %}">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+<body>
+<div class="dashboard-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <a href="#" class="brand">
+            <i class="fa-solid fa-leaf"></i>
+            <span>AgriSmart</span>
+        </a>
+        <p class="sidebar-label">AGRI-PROFESSIONAL</p>
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-link active">
+                <i class="fa-solid fa-house"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="{% url 'professional_farmers' %}" class="nav-link">
+                <i class="fa-solid fa-users"></i>
+                <span>Farmers</span>
+            </a>
+
+            <a href="#soil" class="nav-link">
+                <i class="fa-solid fa-seedling"></i>
+                <span>Soil Analysis</span>
+            </a>
+
+            <a href="#irrigation" class="nav-link">
+                <i class="fa-solid fa-droplet"></i>
+                <span>Irrigation</span>
+            </a>
+
+            <a href="#reports" class="nav-link">
+                <i class="fa-solid fa-chart-column"></i>
+                <span>Reports</span>
+            </a>
+
+            <a href="{% url 'professional_profile' %}" class="nav-link">
+                <i class="fa-solid fa-user"></i>
+                <span>Profile</span>
+            </a>
+            <a href="#settings" class="nav-link">
+                <i class="fa-solid fa-gear"></i>
+                <span>Settings</span>
+            </a>
+            
+        </nav>
+        <form method="POST" action="{% url 'logout' %}" class="logout-form">
+            {% csrf_token %}
+             <button type="submit" class="logout-button">
+            <span class="logout-icon">↪</span>
+            <span>Logout</span>
+            </button>
+        </form>
+        
+
+        <div class="sidebar-footer">
+            <i class="fa-solid fa-leaf"></i>
+            <p>Better Farms<br>Brighter Futures</p>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <header class="topbar">
+            <button class="menu-button" id="menuButton"
+                    aria-label="Toggle navigation">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <div class="profile">
+                <button class="notification-button"
+                        aria-label="Notifications">
+                    <i class="fa-regular fa-bell"></i>
+                    <span class="notification-dot"></span>
+                </button>
+
+                 <div class="avatar">
+                    {% with name=request.user.first_name|default:request.user.username %}
+                        {{ name|first|upper }}{{ name|slice:"1:"|cut:" "|first|upper }}
+                    {% endwith %}
+                </div>
+
+                <div class="profile-info">
+                    <strong>
+                        {{ request.user.get_full_name|default:request.user.username }}
+                    </strong>
+
+                    <span>{{ profile.get_role_display|default:profile.role }}</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="content-area">
+
+            <!-- FARM IMAGE WELCOME BANNER -->
+            <section class="hero-banner">
+                <div class="hero-overlay"></div>
+
+                <div class="hero-content">
+                    <span class="eyebrow">AGRICULTURAL INTELLIGENCE</span>
+                    <h1>Professional Dashboard</h1>
+                    <p>
+                        Monitor farms, analyze conditions and support
+                        better decisions for a sustainable future.
+                    </p>
+                    <a href="#farmers" class="hero-button">
+                        Explore Workspace
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="hero-decoration">
+                    <i class="fa-solid fa-seedling"></i>
+                </div>
+            </section>
+
+            <!-- WELCOME MESSAGE -->
+            <section class="welcome-banner">
+                <div class="welcome-icon">
+                    <i class="fa-solid fa-leaf"></i>
+                </div>
+
+                <div>
+                    <span class="section-eyebrow">YOUR WORKSPACE</span>
+                    <h2>Welcome to AgriSmart!</h2>
+                    <p>The overview.</p>
+                </div>
+
+                <div class="welcome-motto">
+                    Healthy Soil<br>
+                    Productive Farms<br>
+                    Better Tomorrow
+                </div>
+            </section>
+
+            <!-- SUMMARY CARDS -->
+            <section class="stats-grid">
+
+                <article class="stat-card">
+                    <div class="stat-icon green">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <div class="stat-details">
+                        <p>Farmers Supported</p>
+                        <h3>24</h3>
+                        <span>Registered farmers</span>
+                    </div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-icon mint">
+                        <i class="fa-solid fa-seedling"></i>
+                    </div>
+                    <div class="stat-details">
+                        <p>Soil Assessments</p>
+                        <h3>18</h3>
+                        <span>Completed assessments</span>
+                    </div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-icon blue">
+                        <i class="fa-solid fa-droplet"></i>
+                    </div>
+                    <div class="stat-details">
+                        <p>Irrigation Reviews</p>
+                        <h3>12</h3>
+                        <span>Water management reviews</span>
+                    </div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-icon purple">
+                        <i class="fa-solid fa-chart-column"></i>
+                    </div>
+                    <div class="stat-details">
+                        <p>Reports</p>
+                        <h3>15</h3>
+                        <span>Generated reports</span>
+                    </div>
+                </article>
+
+            </section>
+
+            <!-- FEATURE CARDS -->
+            <section class="features-grid">
+                <article class="feature-card" id="farmers">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-people-group"></i>
+                    </div>
+
+                    <div class="feature-content">
+                        <h3>Farmer Management</h3>
+                        <p>
+                            Review farmer profiles and provide
+                            agricultural guidance.
+                        </p>
+                        <a href="{% url 'professional_farmers' %}" class="feature-button">
+                            Manage Farmers
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </article>
+
+                <article class="feature-card" id="soil">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-leaf"></i>
+                    </div>
+
+                    <div class="feature-content">
+                        <h3>Soil Health Intelligence</h3>
+                        <p>
+                            Review soil conditions, nutrient levels
+                            and assessment results.
+                        </p>
+                        <a href="#" class="feature-button">
+                            View Soil Analysis
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </article>
+
+                <article class="feature-card" id="irrigation">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-droplet"></i>
+                    </div>
+
+                    <div class="feature-content">
+                        <h3>Water &amp; Irrigation</h3>
+                        <p>
+                            Support efficient irrigation planning
+                            and water conservation.
+                        </p>
+                        <a href="#" class="feature-button">
+                            Review Irrigation
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </article>
+
+                <article class="feature-card" id="reports">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-file-lines"></i>
+                    </div>
+
+                    <div class="feature-content">
+                        <h3>Agricultural Reports</h3>
+                        <p>
+                            Prepare and review farm assessment
+                            reports.
+                        </p>
+                        <a href="#" class="feature-button">
+                            View Reports
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </article>
+
+            </section>
+
+            <footer class="footer" id="settings">
+                <i class="fa-solid fa-leaf"></i>
+                <span>AgriSmart</span>
+                <span class="footer-separator">•</span>
+                <span>Smart Agricultural Decision Support System</span>
+            </footer>
+
+        </div>
+    </main>
+</div>
+
+<script src="{% static 'css/agri.js' %}"></script>
+<script>
+    const isLoggedIn = "{{ request.user.is_authenticated }}" === "true";
+
+    if (isLoggedIn) {
+        const warningTime = 9 * 60 * 1000;
+        const logoutTime = 10 * 60 * 1000;
+
+        let warningTimer;
+        let logoutTimer;
+
+        function resetInactivityTimer() {
+            clearTimeout(warningTimer);
+            clearTimeout(logoutTimer);
+
+            warningTimer = setTimeout(() => {
+                alert(
+                    "You have been inactive for 9 minutes. " +
+                    "Interact with the page to stay logged in."
+                );
+            }, warningTime);
+
+            logoutTimer = setTimeout(() => {
+                window.location.href = "{% url 'session_timeout' %}";
+            }, logoutTime);
+        }
+
+        [
+            "mousemove",
+            "mousedown",
+            "keydown",
+            "scroll",
+            "touchstart",
+            "click"
+        ].forEach(eventName => {
+            document.addEventListener(
+                eventName,
+                resetInactivityTimer,
+                { passive: true }
+            );
+        });
+
+        resetInactivityTimer();
+    }
+</script>
+
+</body>
+</html>

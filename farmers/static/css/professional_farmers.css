@@ -1,0 +1,434 @@
+
+:root {
+    --primary: #16834a;
+    --primary-dark: #0b5934;
+    --primary-light: #e9f6ee;
+    --background: #f4f7f5;
+    --surface: #ffffff;
+    --text: #1d2b23;
+    --muted: #6c7c72;
+    --border: #e1e9e3;
+    --shadow: 0 5px 20px rgba(20, 60, 38, 0.06);
+    --radius: 14px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--background);
+    color: var(--text);
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+}
+
+/* Main page container */
+
+.farm-container {
+    width: min(1100px, calc(100% - 40px));
+    margin: 0 auto;
+    padding: 32px 0 60px;
+}
+
+/* Back navigation */
+
+.farm-container > a:first-child {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 22px;
+    color: var(--primary);
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.farm-container > a:first-child:hover {
+    color: var(--primary-dark);
+}
+
+/* Page heading */
+
+.form-heading {
+    position: relative;
+    overflow: hidden;
+    padding: 30px 32px;
+    margin-bottom: 28px;
+    border-radius: 18px;
+    background: linear-gradient(120deg, #0b5934, #16834a);
+    color: #ffffff;
+    box-shadow: var(--shadow);
+}
+
+.form-heading h1 {
+    margin: 0 0 9px;
+    font-size: clamp(25px, 4vw, 34px);
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+    color: #ffffff !important;
+    opacity: 1;
+    visibility: visible;
+}
+
+.form-heading p {
+    margin: 0;
+    max-width: 650px;
+    color: #e1f3e7;
+    font-size: 15px;
+}
+
+/* Search form — farmer list page */
+
+.search-form {
+    display: flex;
+    align-items: stretch;
+    gap: 12px;
+    margin: 26px 0 20px;
+}
+
+.search-form input {
+    flex: 1;
+    min-width: 0;
+    padding: 13px 16px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    outline: none;
+    background: var(--surface);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 14px;
+    transition: border-color 0.2s ease,
+                box-shadow 0.2s ease;
+}
+
+.search-form input::placeholder {
+    color: #94a39a;
+}
+
+.search-form input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(22, 131, 74, 0.12);
+}
+
+.search-form button {
+    padding: 12px 24px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--primary);
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease,
+                transform 0.2s ease;
+}
+
+.search-form button:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+.search-form button:focus-visible,
+.back-link:focus-visible,
+.farm-container > a:focus-visible {
+    outline: 3px solid #8acba5;
+    outline-offset: 3px;
+}
+
+/* Farmer result count */
+
+.farm-container > p {
+    margin: 18px 0;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.farm-container > p strong {
+    color: var(--primary);
+    font-size: 16px;
+}
+
+/* General information cards */
+
+.form-section {
+    min-width: 0;
+    padding: 25px 27px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+}
+
+.form-section h2 {
+    margin: 0 0 16px;
+    color: var(--primary-dark);
+    font-size: 19px;
+    font-weight: 700;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.form-section p {
+    margin: 9px 0;
+    color: #59685f;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
+
+.form-section p strong {
+    color: var(--text);
+    font-weight: 600;
+}
+
+/* Farmer cards — list page */
+
+.farmer-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+    transition: border-color 0.2s ease,
+                box-shadow 0.2s ease,
+                transform 0.2s ease;
+}
+
+.farmer-card:hover {
+    border-color: #b9ddc6;
+    box-shadow: 0 9px 26px rgba(20, 60, 38, 0.09);
+    transform: translateY(-2px);
+}
+
+.farmer-card > div {
+    flex: 1;
+    min-width: 0;
+}
+
+.farmer-card h2 {
+    margin-bottom: 10px;
+    font-size: 19px;
+}
+
+.farmer-card p {
+    margin: 5px 0;
+}
+
+/* Farmer details action link */
+
+.back-link {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 17px;
+    border: 1px solid var(--primary);
+    border-radius: 9px;
+    background: var(--primary);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    transition: background 0.2s ease,
+                border-color 0.2s ease,
+                transform 0.2s ease;
+}
+
+.back-link:hover {
+    border-color: var(--primary-dark);
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+/* Registered farms heading on detail page */
+
+.farm-container > h2 {
+    margin: 30px 0 18px;
+    color: var(--primary-dark);
+    font-size: 22px;
+    line-height: 1.4;
+}
+
+/* Registered farm sections */
+
+.form-section small {
+    display: block;
+    padding-top: 14px;
+    margin-top: 18px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 12px;
+}
+
+/* Empty states */
+
+.form-section:has(h2) {
+    overflow-wrap: anywhere;
+}
+
+/* Selection and keyboard accessibility */
+
+::selection {
+    background: #ccebd7;
+    color: #123b25;
+}
+body {
+    background-color: #e8f5e9 !important;
+}
+
+.farm-container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 30px;
+    background: white;
+    border-radius: 16px;
+}
+/* Soil recommendation actions */
+.recommendation-actions {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.recommendation-button {
+    display: inline-block;
+    padding: 11px 18px;
+    background-color: #086348;
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.recommendation-button:hover {
+    background-color: #064b3a;
+}
+
+/* Existing recommendations */
+.existing-recommendations {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid #dce5df;
+}
+
+.existing-recommendations h4 {
+    margin-bottom: 14px;
+    color: #064b3a;
+}
+
+.recommendation-item {
+    margin-top: 12px;
+    padding: 16px;
+    background-color: #f4f8f5;
+    border: 1px solid #dce5df;
+    border-radius: 8px;
+}
+
+.recommendation-item p {
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.recommendation-item small {
+    display: block;
+    margin-top: 12px;
+    color: #5b6b61;
+}
+/* Tablet and mobile */
+
+@media (max-width: 700px) {
+    .farm-container {
+        width: calc(100% - 28px);
+        padding-top: 22px;
+    }
+
+    .form-heading {
+        padding: 24px 21px;
+        border-radius: 14px;
+    }
+
+    .form-heading p {
+        font-size: 14px;
+    }
+
+    .farmer-card {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 18px;
+        padding: 21px;
+    }
+
+    .farmer-card .back-link {
+        width: 100%;
+        white-space: normal;
+    }
+
+    .form-section {
+        padding: 21px;
+    }
+
+    .farm-container > h2 {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .farm-container {
+        width: calc(100% - 22px);
+        padding-top: 16px;
+    }
+
+    .form-heading {
+        padding: 21px 17px;
+        margin-bottom: 21px;
+    }
+
+    .form-heading h1 {
+        font-size: 25px;
+    }
+
+    .search-form {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .search-form input,
+    .search-form button {
+        width: 100%;
+        min-height: 46px;
+    }
+
+    .form-section {
+        padding: 17px;
+        margin-bottom: 15px;
+        border-radius: 11px;
+    }
+
+    .form-section h2 {
+        font-size: 17px;
+    }
+
+    .form-section p {
+        font-size: 13px;
+    }
+
+    .back-link {
+        width: 100%;
+        white-space: normal;
+    }
+}
+
+
